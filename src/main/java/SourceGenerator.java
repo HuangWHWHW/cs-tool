@@ -51,6 +51,10 @@ class SourceGenerator {
     }
 
     public static String genSourceName(String table) {
+        String[] temp = table.split("\\.");
+        if (temp.length > 1) {
+            return temp[1] + "_SOURCE";
+        }
         return table + "_SOURCE";
     }
 
