@@ -55,6 +55,7 @@ public class Config {
             String sourceCol = row.getCell(2).getStringCellValue();
             String colMap = row.getCell(3).getStringCellValue();
             String primaryKey = row.getCell(4).getStringCellValue();
+            String sourceTable = row.getCell(5).getStringCellValue();
 
             if (tables.containsKey(tableName)) {
                 throw new IllegalArgumentException("Table name is repeated: " + tableName);
@@ -65,6 +66,7 @@ public class Config {
             tableParameters.put(TABLE, tableName);
             tableParameters.put(PARTITION, partition);
             tableParameters.put(PRIMARY_KAY, primaryKey);
+            tableParameters.put(SOURCE_TABLE, sourceTable);
             if (!sourceCol.isEmpty()) {
                 tableParameters.put(SOURCE_COLUMN, sourceCol);
             }

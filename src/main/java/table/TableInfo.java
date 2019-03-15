@@ -9,6 +9,7 @@ import static config.ConfigKey.*;
 
 public class TableInfo {
     private String tableName;
+    private String sourceTable;
     private String partition;
     private String primaryKey;
     private List<String> sourceColumn = new ArrayList<>();
@@ -28,6 +29,16 @@ public class TableInfo {
             throw new IllegalArgumentException("Must specify primary key for table: " + tableName);
         }
         primaryKey = tableInfo.get(PRIMARY_KAY);
+
+        if (tableInfo.containsKey(SOURCE_TABLE)) {
+            sourceTable = tableInfo.get(SOURCE_TABLE);
+        } else {
+            if (tableName.split("\\.").length > 1) {
+                sourceTable = tableName.split("\\.")[1];
+            } else {
+                sourceTable = tableName;
+            }
+        }
 
         if (tableInfo.containsKey(SOURCE_COLUMN)) {
             parseSourceColumn(tableInfo.get(SOURCE_COLUMN));
@@ -149,5 +160,9 @@ public class TableInfo {
 
     public String getPrimaryKey() {
         return primaryKey;
+    }
+
+    public String getSourceTable() {
+        return sourceTable;
     }
 }

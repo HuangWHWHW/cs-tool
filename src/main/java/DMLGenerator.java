@@ -8,7 +8,8 @@ class DMLGenerator {
         String colNames = SchemaManagerFactory.getOrCreateSchemaManager(table, config).getColNameSet();
         String sinkName = SinkGenerator.genSinkName(table);
         String sourceName = SourceGenerator.genSourceName(table);
+        String sourceTable = config.getTable(table).getSourceTable();
         return "INSERT INTO " + sinkName + " SELECT " + colNames + " FROM " + sourceName +
-                " WHERE " + SourceGenerator.EXTERNAL_COL_NAME + "=\"" + table + "\";";
+                " WHERE " + SourceGenerator.EXTERNAL_COL_NAME + "=\"" + sourceTable + "\";";
     }
 }

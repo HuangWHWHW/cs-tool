@@ -12,6 +12,7 @@ public class ConfigKey {
     public static final String PRIMARY_KAY = "primary_key";
     public static final String SOURCE_COLUMN = "source_column";
     public static final String COL_MAP = "col_map";
+    public static final String SOURCE_TABLE = "source_table";
 
     public static final String[] require = {CHANNEL, DWS_URL, DWS_IP, DWS_USER_NAME, DWS_PASSWD};
 }
