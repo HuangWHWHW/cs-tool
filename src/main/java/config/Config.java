@@ -54,6 +54,7 @@ public class Config {
             String partition = String.valueOf((int)(row.getCell(1).getNumericCellValue()));
             String sourceCol = row.getCell(2).getStringCellValue();
             String colMap = row.getCell(3).getStringCellValue();
+            String primaryKey = row.getCell(4).getStringCellValue();
 
             if (tables.containsKey(tableName)) {
                 throw new IllegalArgumentException("Table name is repeated: " + tableName);
@@ -63,6 +64,7 @@ public class Config {
             HashMap<String, String> tableParameters = new HashMap<>();
             tableParameters.put(TABLE, tableName);
             tableParameters.put(PARTITION, partition);
+            tableParameters.put(PRIMARY_KAY, primaryKey);
             if (!sourceCol.isEmpty()) {
                 tableParameters.put(SOURCE_COLUMN, sourceCol);
             }

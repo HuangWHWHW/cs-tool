@@ -14,7 +14,7 @@ class SinkGenerator {
 
     private static String genWithOption(String table, Config config) throws MalformedURLException, SQLException {
 
-        String primaryKey = SchemaManagerFactory.getOrCreateSchemaManager(table, config).getPrimaryKeysString();
+        String primaryKey = config.getTable(table).getPrimaryKey();
 
         // remove start with jdbc in url, only use: "postgresql://ip:port/database"
         String url = config.get(DWS_GEN_URL);

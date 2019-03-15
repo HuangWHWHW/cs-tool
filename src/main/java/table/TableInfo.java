@@ -10,6 +10,7 @@ import static config.ConfigKey.*;
 public class TableInfo {
     private String tableName;
     private String partition;
+    private String primaryKey;
     private List<String> sourceColumn = new ArrayList<>();
 
     // key for attr name in sink, value for attr name in dws table
@@ -19,9 +20,14 @@ public class TableInfo {
         tableName = tableInfo.get(TABLE);
 
         if (!tableInfo.containsKey(PARTITION)) {
-            throw new IllegalArgumentException("Must specify partition for table: " +tableName);
+            throw new IllegalArgumentException("Must specify partition for table: " + tableName);
         }
         partition = tableInfo.get(PARTITION);
+
+        if (!tableInfo.containsKey(PRIMARY_KAY)) {
+            throw new IllegalArgumentException("Must specify primary key for table: " + tableName);
+        }
+        primaryKey = tableInfo.get(PRIMARY_KAY);
 
         if (tableInfo.containsKey(SOURCE_COLUMN)) {
             parseSourceColumn(tableInfo.get(SOURCE_COLUMN));
@@ -139,5 +145,9 @@ public class TableInfo {
             }
         }
         return "";
+    }
+
+    public String getPrimaryKey() {
+        return primaryKey;
     }
 }

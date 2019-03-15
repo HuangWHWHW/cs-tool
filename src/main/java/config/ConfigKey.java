@@ -9,6 +9,7 @@ public class ConfigKey {
     public static final String DWS_PASSWD = "dws_passwd";
     public static final String TABLE = "table_name";
     public static final String PARTITION = "partition";
+    public static final String PRIMARY_KAY = "primary_key";
     public static final String SOURCE_COLUMN = "source_column";
     public static final String COL_MAP = "col_map";
 

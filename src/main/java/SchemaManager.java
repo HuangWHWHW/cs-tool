@@ -19,7 +19,7 @@ class SchemaManager {
 
     // build cs schema for keeping order
     private List<Pair<String, String> > csSchemaInfo = new ArrayList<>();
-    private List<String> primaryKeys;
+    private List<String> primaryKeys = new ArrayList<>();
     private TableInfo tableInfo;
     private String tableName;
     private ResultSetMetaData rsmd;
@@ -32,7 +32,7 @@ class SchemaManager {
         rsmd = dwsManager.getTableMeta(table);
 
         // get primary keys
-        primaryKeys = dwsManager.getPrimaryKeys(table);
+        primaryKeys.add(tableInfo.getPrimaryKey());
         checkPrimaryKeys();
 
         // general schema sql
