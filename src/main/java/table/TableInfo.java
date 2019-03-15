@@ -173,4 +173,8 @@ public class TableInfo {
     public String getTableName() {
         return tableName;
     }
+
+    public String getDefaultAppName() {
+        return channel + "_" + partition;
+    }
 }

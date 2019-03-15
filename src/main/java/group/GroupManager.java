@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.HashMap;
 
 public class GroupManager {
-    public static final String DEFAULT_GROUP_NAME = "default";
 
     // group map
     private static HashMap<String, GroupInfo> groups = new HashMap<>();
@@ -26,7 +25,7 @@ public class GroupManager {
         tables.put(name, tableInfo);
 
         // store group info
-        String groupName = tableInfo.getGroupName().isEmpty() ? DEFAULT_GROUP_NAME : tableInfo.getGroupName();
+        String groupName = tableInfo.getGroupName().isEmpty() ? tableInfo.getDefaultAppName() : tableInfo.getGroupName();
         if (groups.containsKey(groupName)) {
             GroupInfo group = groups.get(groupName);
             group.addTable(name, tableInfo);
