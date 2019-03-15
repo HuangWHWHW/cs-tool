@@ -1,4 +1,4 @@
-import config.Config;
+import group.GroupManager;
 import javafx.util.Pair;
 import table.TableInfo;
 
@@ -24,8 +24,8 @@ class SchemaManager {
     private String tableName;
     private ResultSetMetaData rsmd;
 
-    public SchemaManager(DWSManager dwsManager, String table, Config config) throws SQLException {
-        tableInfo = config.getTable(table);
+    public SchemaManager(DWSManager dwsManager, String table) throws SQLException {
+        tableInfo = GroupManager.getTable(table);
         tableName = table;
 
         // get table meta
@@ -183,5 +183,14 @@ class SchemaManager {
             keySet.add(entry.getKey());
         }
         return keySet;
+    }
+
+    public String getColumnType(String columnName) {
+        for (Pair<String, String> entry : csSchemaInfo) {
+            if (entry.getKey().equals(columnName)){
+                return entry.getValue();
+            }
+        }
+        return null;
     }
 }

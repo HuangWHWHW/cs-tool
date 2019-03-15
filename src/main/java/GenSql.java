@@ -1,6 +1,12 @@
 import config.Config;
+import group.ChannelInfo;
+import group.GroupInfo;
+import group.GroupManager;
+import group.PartitionInfo;
+import table.TableInfo;
 
 import javax.swing.*;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -19,19 +25,41 @@ class GenSql {
         Config config = new Config(configPath);
 
         try {
-            for (String tableName : config.getTableNames()) {
-                // get sink ddl
-                String sinkDDL = SinkGenerator.genCreateSql(config, tableName);
+            for (GroupInfo group : GroupManager.getGroups()) {
+                String appName = group.getName();
+                FileWriter writer = new FileWriter(appName);
+                for (ChannelInfo channel : group.getChannels()) {
+                    String channelName = channel.getName();
+                    for (PartitionInfo partition : channel.getPartitions()) {
+                        String partitionId = partition.getId();
+                        String sourceName = channelName + "_" + partitionId;
+                        SourceGenerator.setSourceName(sourceName);
+                        String sinkDDL = "";
+                        String dml = "";
+                        for (TableInfo tableInfo : partition.getTables()) {
+                            String tableName = tableInfo.getTableName();
 
-                // get source ddl
-                String sourceDDL = SourceGenerator.genCreateSql(config, tableName);
+                            // add table info to source
+                            SourceGenerator.addTable(tableName, config);
 
-                // get dml
-                String dml = DMLGenerator.genInsertSql(tableName, config);
+                            if (tableInfo.isNeedCreate()) {
+                                // get sink ddl
+                                sinkDDL += "\n" + SinkGenerator.genCreateSql(config, tableName);
 
-                System.out.println(sourceDDL);
-                System.out.println(sinkDDL);
-                System.out.println(dml);
+                                // get dml
+                                dml += "\n" + DMLGenerator.genInsertSql(tableName, sourceName, config);
+                            }
+                        }
+                        // get source ddl
+                        String sourceDDL = SourceGenerator.genCreateSql(channelName, partitionId);
+
+                        // write to file
+                        writer.write(sourceDDL + "\n");
+                        writer.write(sinkDDL + "\n");
+                        writer.write(dml + "\n");
+                    }
+                }
+                writer.close();
             }
         } finally {
             SchemaManagerFactory.close();

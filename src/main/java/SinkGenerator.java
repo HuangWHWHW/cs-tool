@@ -1,7 +1,7 @@
 import config.Config;
+import group.GroupManager;
 import table.TableInfo;
 
-import java.net.MalformedURLException;
 import java.sql.SQLException;
 
 import static config.ConfigKey.*;
@@ -12,7 +12,7 @@ class SinkGenerator {
         return "CREATE SINK STREAM " + genSinkName(tableName);
     }
 
-    private static String genWithOption(String table, Config config) throws MalformedURLException, SQLException {
+    private static String genWithOption(String table, Config config) throws SQLException {
 
         String primaryKey = SchemaManagerFactory.getOrCreateSchemaManager(table, config).getPrimaryKeysString();
 
@@ -28,7 +28,7 @@ class SinkGenerator {
                 "\ttable_name = \"" + table + "\",\n" +
                 "\tprimary_key = \"" + primaryKey + "\"";
 
-        TableInfo tableInfo = config.getTable(table);
+        TableInfo tableInfo = GroupManager.getTable(table);
         if (tableInfo.hasColMap()) {
             result += ",\n\tdb_columns = \"" + tableInfo.getColMapKeyString() + "\"";
         }
@@ -42,7 +42,7 @@ class SinkGenerator {
 
     public static String genCreateSql(
             Config config,
-            String tableName) throws SQLException, MalformedURLException {
+            String tableName) throws SQLException {
         String schema = SchemaManagerFactory.getOrCreateSchemaManager(tableName, config).toString();
         return genStartWith(tableName) + "(" + schema + ")\n" + genWithOption(tableName, config);
     }

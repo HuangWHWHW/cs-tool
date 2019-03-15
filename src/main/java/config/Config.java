@@ -3,14 +3,14 @@ package config;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Set;
 
+import group.GroupManager;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import table.TableInfo;
 import utils.Util;
 
 import static config.ConfigKey.*;
@@ -19,12 +19,11 @@ public class Config {
     private final String BASE_CONFIG_SHEET_NAME = "BaseConfig";
     private final String TABLE_CONFIG_SHEET_NAME = "TableConfig";
 
-    private HashMap<String, String> parameters = new HashMap<>();
-    private HashMap<String, TableInfo> tables = new HashMap<>();
+    private static HashMap<String, String> parameters = new HashMap<>();
 
     public Config(String path) throws IOException {
         // read file
-        Workbook workbook = null;
+        Workbook workbook;
         try {
             // for office 2007+
             workbook = new XSSFWorkbook(new FileInputStream(path));
@@ -38,41 +37,28 @@ public class Config {
         while (index <= sheet.getLastRowNum()) {
             Row row = sheet.getRow(index);
             String key = row.getCell(0).getStringCellValue();
-            String value = row.getCell(1).getStringCellValue();
-
+            String value = Util.getCellStringValue(row.getCell(1));
             parameters.put(key, value);
             index++;
         }
 
         // get table config
         sheet = workbook.getSheet(TABLE_CONFIG_SHEET_NAME);
+        // row index start with 1
         index = 1;
+        Row firstRow = sheet.getRow(0);
         while (index <= sheet.getLastRowNum()) {
             Row row = sheet.getRow(index);
 
-            String tableName = row.getCell(0).getStringCellValue();
-            String partition = String.valueOf((int)(row.getCell(1).getNumericCellValue()));
-            String sourceCol = row.getCell(2).getStringCellValue();
-            String colMap = row.getCell(3).getStringCellValue();
-
-            if (tables.containsKey(tableName)) {
-                throw new IllegalArgumentException("Table name is repeated: " + tableName);
-            }
-
-            // store table name
             HashMap<String, String> tableParameters = new HashMap<>();
-            tableParameters.put(TABLE, tableName);
-            tableParameters.put(PARTITION, partition);
-            if (!sourceCol.isEmpty()) {
-                tableParameters.put(SOURCE_COLUMN, sourceCol);
-            }
-            if (!colMap.isEmpty()) {
-                tableParameters.put(COL_MAP, colMap);
+            for (int cellCount = 0; cellCount <= firstRow.getLastCellNum(); cellCount++) {
+                Cell cell = row.getCell(cellCount);
+                String key = firstRow.getCell(cellCount).getStringCellValue();
+                tableParameters.put(key, Util.getCellStringValue(cell));
             }
 
             // get table config
-            tables.put(tableName, new TableInfo(tableParameters));
-
+            GroupManager.addTable(tableParameters);
             index++;
         }
 
@@ -88,11 +74,6 @@ public class Config {
             }
         }
 
-        // must set at least one table
-        if (tables.isEmpty()) {
-            throw new IllegalArgumentException("Please specify \"" + TABLE + "\"");
-        }
-
         /**
          * check {@link DWS_IP} is a ip address
           */
@@ -102,27 +83,14 @@ public class Config {
                 throw new IllegalArgumentException("Illegal ip address: " + ip + " in " + DWS_IP);
             }
         }
-
     }
 
-    public String get(String key) {
+    public static String get(String key) {
         if (parameters.containsKey(key)) {
             return parameters.get(key);
         } else {
             return null;
         }
-    }
-
-    public TableInfo getTable(String tableName) {
-        if (tables.containsKey(tableName)) {
-            return tables.get(tableName);
-        } else {
-            return null;
-        }
-    }
-
-    public Set<String> getTableNames(){
-        return tables.keySet();
     }
 
     public boolean hasKey(String key) {

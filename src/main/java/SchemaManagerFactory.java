@@ -1,16 +1,16 @@
 import config.Config;
 
-import java.net.MalformedURLException;
 import java.sql.SQLException;
 import java.util.HashMap;
 
 public class SchemaManagerFactory {
 
+    // table name -> schema
     private static HashMap<String, SchemaManager> schemaManagerInfo = new HashMap<>();
     private static DWSManager dwsManager = null;
 
     public static SchemaManager getOrCreateSchemaManager(
-            String table, Config config) throws SQLException, MalformedURLException {
+            String table, Config config) throws SQLException {
         if (schemaManagerInfo.containsKey(table)) {
             // return current schema manager by table
             return schemaManagerInfo.get(table);
@@ -22,7 +22,7 @@ public class SchemaManagerFactory {
             }
 
             // create schema manager and store it
-            schemaManagerInfo.put(table, new SchemaManager(dwsManager, table, config));
+            schemaManagerInfo.put(table, new SchemaManager(dwsManager, table));
             return schemaManagerInfo.get(table);
         }
     }

@@ -1,5 +1,8 @@
 package table;
 
+import config.Config;
+import utils.PartitionKeyMap;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,30 +12,44 @@ import static config.ConfigKey.*;
 
 public class TableInfo {
     private String tableName;
+    private String channel;
     private String partition;
+    private String groupName;
+    private boolean isNeedCreate;
+
     private List<String> sourceColumn = new ArrayList<>();
 
     // key for attr name in sink, value for attr name in dws table
     private HashMap<String, String> colMap = new HashMap<>();
 
     public TableInfo(HashMap<String, String> tableInfo) {
+        check(tableInfo);
+
         tableName = tableInfo.get(TABLE);
+        partition = PartitionKeyMap.getPartitonId(tableName, Integer.valueOf(Config.get(PARTITION_NUM)));
+        channel = tableInfo.getOrDefault(TABLE_CHANNLE, Config.get(CHANNEL));
+        groupName = tableInfo.get(GROUP_NAME);
+        isNeedCreate = !tableInfo.get(NEED_CREATE).equals("n");
 
-        if (!tableInfo.containsKey(PARTITION)) {
-            throw new IllegalArgumentException("Must specify partition for table: " +tableName);
-        }
-        partition = tableInfo.get(PARTITION);
-
-        if (tableInfo.containsKey(SOURCE_COLUMN)) {
+        if (!tableInfo.get(SOURCE_COLUMN).isEmpty()) {
             parseSourceColumn(tableInfo.get(SOURCE_COLUMN));
         }
 
-        if (tableInfo.containsKey(COL_MAP)) {
+        if (!tableInfo.get(COL_MAP).isEmpty()) {
             parseColMap(tableInfo.get(COL_MAP));
 
             // check source_column and col_map be the same
             if (!compareColumnInfo()) {
                 throw new IllegalArgumentException("source_column and col_map must be the same in table " + tableName);
+            }
+        }
+    }
+
+    private void check(HashMap<String, String> parameters) {
+        // check required key
+        for (String requireKey : requireTableConfig) {
+            if (parameters.get(requireKey).isEmpty()) {
+                throw new IllegalArgumentException(requireKey + " is required");
             }
         }
     }
@@ -139,5 +156,21 @@ public class TableInfo {
             }
         }
         return "";
+    }
+
+    public String getChannel() {
+        return channel;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public boolean isNeedCreate() {
+        return isNeedCreate;
+    }
+
+    public String getTableName() {
+        return tableName;
     }
 }
