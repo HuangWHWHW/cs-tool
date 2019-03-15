@@ -108,7 +108,7 @@ class SchemaManager {
                 || dwsType.equals("timestamptz")
                 || dwsType.equals("time")
                 || dwsType.equals("timetz")) {
-            return "TIMESTAMP(3)";
+            return "TIMESTAMP";
         } else if (dwsType.equals("numeric")
                 || dwsType.equals("decimal")) {
             return "DECIMAL(" + size + ", " + scale + ")";
