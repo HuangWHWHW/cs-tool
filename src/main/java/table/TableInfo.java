@@ -28,7 +28,7 @@ public class TableInfo {
         tableName = tableInfo.get(TABLE);
         partition = PartitionKeyMap.getPartitonId(tableName, Integer.valueOf(Config.get(PARTITION_NUM)));
         channel = tableInfo.getOrDefault(TABLE_CHANNLE, Config.get(CHANNEL));
-        groupName = tableInfo.get(GROUP_NAME);
+        groupName = tableInfo.getOrDefault(GROUP_NAME, channel + "_" + partition);
         isNeedCreate = !tableInfo.get(NEED_CREATE).equals("n");
 
         if (!tableInfo.get(SOURCE_COLUMN).isEmpty()) {

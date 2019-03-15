@@ -67,7 +67,7 @@ class SourceGenerator {
         StringBuffer sb = new StringBuffer();
 
         for (Map.Entry<String, String> entry : columnInfo.entrySet()) {
-            sb.append(",");
+            sb.append(", ");
             String colName = entry.getKey();
             String colType = entry.getValue();
             sb.append(colName + " " + colType);
@@ -89,7 +89,12 @@ class SourceGenerator {
 
     public static String genCreateSql(String channel, String partitionId) {
         // There is one more column named "tableName" in source
-        String schema = "tableName STRING, " + genSchemaSql();
+        String schema = "tableName STRING" + genSchemaSql();
         return genStartWith() + "(" + schema + ")\n" + genWithOption(channel, partitionId);
+    }
+
+    public static void clean() {
+        schemaInfo.clear();
+        columnInfo.clear();
     }
 }

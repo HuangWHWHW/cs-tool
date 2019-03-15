@@ -25,7 +25,7 @@ public class GroupManager {
         tables.put(name, tableInfo);
 
         // store group info
-        String groupName = tableInfo.getGroupName().isEmpty() ? tableInfo.getDefaultAppName() : tableInfo.getGroupName();
+        String groupName = tableInfo.getGroupName();
         if (groups.containsKey(groupName)) {
             GroupInfo group = groups.get(groupName);
             group.addTable(name, tableInfo);

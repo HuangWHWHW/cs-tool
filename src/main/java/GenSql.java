@@ -4,6 +4,7 @@ import group.GroupInfo;
 import group.GroupManager;
 import group.PartitionInfo;
 import table.TableInfo;
+import utils.PartitionKeyMap;
 
 import javax.swing.*;
 import java.io.FileWriter;
@@ -33,6 +34,7 @@ class GenSql {
                     for (PartitionInfo partition : channel.getPartitions()) {
                         String partitionId = partition.getId();
                         String sourceName = channelName + "_" + partitionId;
+                        SourceGenerator.clean();
                         SourceGenerator.setSourceName(sourceName);
                         String sinkDDL = "";
                         String dml = "";

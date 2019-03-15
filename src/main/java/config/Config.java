@@ -51,10 +51,13 @@ public class Config {
             Row row = sheet.getRow(index);
 
             HashMap<String, String> tableParameters = new HashMap<>();
-            for (int cellCount = 0; cellCount <= firstRow.getLastCellNum(); cellCount++) {
+            for (int cellCount = 0; cellCount < firstRow.getLastCellNum(); cellCount++) {
                 Cell cell = row.getCell(cellCount);
                 String key = firstRow.getCell(cellCount).getStringCellValue();
-                tableParameters.put(key, Util.getCellStringValue(cell));
+                String value = Util.getCellStringValue(cell);
+                if (value != null) {
+                    tableParameters.put(key, value);
+                }
             }
 
             // get table config
@@ -91,10 +94,6 @@ public class Config {
         } else {
             return null;
         }
-    }
-
-    public boolean hasKey(String key) {
-        return parameters.containsKey(key);
     }
 
     public void set(String key, String value) {

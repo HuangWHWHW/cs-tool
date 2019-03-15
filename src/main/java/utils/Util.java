@@ -20,6 +20,9 @@ public class Util {
     }
 
     public static String getCellStringValue(Cell cell) {
+        if (cell == null) {
+            return null;
+        }
         if (cell.getCellType() == XSSFCell.CELL_TYPE_NUMERIC) {
             return String.valueOf((int) (cell.getNumericCellValue()));
         } else {
