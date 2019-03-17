@@ -60,7 +60,13 @@ class DWSManager {
     public List<String> getPrimaryKeys(String tableName) throws SQLException {
         List<String> primaryKeys = new ArrayList<>();
         DatabaseMetaData dbmd = connection.getMetaData();
-        ResultSet rs = dbmd.getPrimaryKeys(null, null, tableName);
+        String schemaName = null;
+        String tableNameTemp = tableName;
+        if (tableName.split("\\.").length > 1) {
+            schemaName = tableName.split("\\.")[0];
+            tableNameTemp = tableName.split("\\.")[1];
+        }
+        ResultSet rs = dbmd.getPrimaryKeys(null, schemaName, tableNameTemp);
         while (rs.next()) {
             // see the doc of "getPrimaryKeys", primary key name is in the 4th object
             primaryKeys.add(String.valueOf(rs.getObject(4)));
