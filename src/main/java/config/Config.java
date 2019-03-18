@@ -96,7 +96,7 @@ public class Config {
         }
     }
 
-    public void set(String key, String value) {
+    public static void set(String key, String value) {
         parameters.put(key, value);
     }
 }

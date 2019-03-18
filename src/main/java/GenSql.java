@@ -3,8 +3,8 @@ import group.ChannelInfo;
 import group.GroupInfo;
 import group.GroupManager;
 import group.PartitionInfo;
+import table.SchemaManagerFactory;
 import table.TableInfo;
-import utils.PartitionKeyMap;
 
 import javax.swing.*;
 import java.io.FileWriter;
@@ -34,30 +34,19 @@ class GenSql {
                     for (PartitionInfo partition : channel.getPartitions()) {
                         String partitionId = partition.getId();
                         String sourceName = channelName + "_" + partitionId;
-                        SourceGenerator.clean();
                         SourceGenerator.setSourceName(sourceName);
-                        String sinkDDL = "";
-                        String dml = "";
-                        for (TableInfo tableInfo : partition.getTables()) {
-                            String tableName = tableInfo.getTableName();
 
-                            // add table info to source
-                            SourceGenerator.addTable(tableName, config);
-
-                            if (tableInfo.isNeedCreate()) {
-                                // get sink ddl
-                                sinkDDL += "\n" + SinkGenerator.genCreateSql(config, tableName);
-
-                                // get dml
-                                dml += "\n" + DMLGenerator.genInsertSql(tableName, sourceName, config);
-                            }
-                        }
                         // get source ddl
                         String sourceDDL = SourceGenerator.genCreateSql(channelName, partitionId);
 
+                        String dml = "";
+                        for (TableInfo tableInfo : partition.getTables()) {
+                            String tableName = tableInfo.getTableName();
+                            dml += "\n" + DMLGenerator.genInsertSql(tableName, sourceName, config);
+                        }
+
                         // write to file
                         writer.write(sourceDDL + "\n");
-                        writer.write(sinkDDL + "\n");
                         writer.write(dml + "\n");
                     }
                 }
