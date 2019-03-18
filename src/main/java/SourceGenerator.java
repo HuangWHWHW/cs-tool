@@ -10,8 +10,8 @@ import static config.ConfigKey.*;
 class SourceGenerator {
     private static final String REGION = "cn-south-1";
     public static final String EXTERNAL_COL_NAME = "tableName";
-    public static final String SOURCE_SCHEMA = "TABLE_NAME STRING, OP_TYPE STRING, BEFORE STRING, AFTER STRING";
-    public static final String JSON_CONFIG = "TABLE=table; OP_TYPE=op_type; BEFORE=before; AFTER=after";
+    private static final String SOURCE_SCHEMA = "tableName STRING, OP_TYPE STRING, BEFORE STRING, AFTER STRING";
+    private static final String JSON_CONFIG = "tableName=table; OP_TYPE=op_type; BEFORE=before; AFTER=after";
 
     private static String name;
 

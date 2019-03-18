@@ -2,8 +2,10 @@ package group;
 
 import table.TableInfo;
 
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 
 public class GroupManager {
 
@@ -13,7 +15,7 @@ public class GroupManager {
     // all tables info
     private static HashMap<String, TableInfo> tables = new HashMap<>();
 
-    public static void addTable(HashMap<String, String> tableParameters) {
+    public static void addTable(HashMap<String, String> tableParameters) throws SQLException {
         TableInfo tableInfo = new TableInfo(tableParameters);
 
         String name = tableInfo.getTableName();
@@ -44,5 +46,19 @@ public class GroupManager {
 
     public static Collection<GroupInfo> getGroups() {
         return groups.values();
+    }
+
+    public static String getTableMap() {
+        StringBuffer sb = new StringBuffer();
+        int count = 0;
+        for (Map.Entry<String, TableInfo> entry : tables.entrySet()) {
+            if (count > 0) {
+                sb.append(",");
+                String dwsTable = entry.getKey();
+                String sourceTable = entry.getValue().getSourceTable();
+                sb.append(dwsTable + "=" + sourceTable);
+            }
+        }
+        return sb.toString();
     }
 }

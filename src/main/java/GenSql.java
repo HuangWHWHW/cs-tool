@@ -23,7 +23,7 @@ class GenSql {
             return;
         }
 
-        Config config = new Config(configPath);
+        new Config(configPath);
 
         try {
             for (GroupInfo group : GroupManager.getGroups()) {
@@ -39,11 +39,8 @@ class GenSql {
                         // get source ddl
                         String sourceDDL = SourceGenerator.genCreateSql(channelName, partitionId);
 
-                        String dml = "";
-                        for (TableInfo tableInfo : partition.getTables()) {
-                            String tableName = tableInfo.getTableName();
-                            dml += "\n" + DMLGenerator.genInsertSql(tableName, sourceName, config);
-                        }
+                        // get dml
+                        String dml = DMLGenerator.genInsertSql(sourceName);
 
                         // write to file
                         writer.write(sourceDDL + "\n");

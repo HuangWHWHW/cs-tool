@@ -1,13 +1,22 @@
 import config.Config;
-import table.SchemaManagerFactory;
+import group.GroupManager;
 
-import java.sql.SQLException;
+import static config.ConfigKey.*;
 
 class DMLGenerator {
-    public static String genInsertSql(String table, String sourceName, Config config) throws SQLException {
-        String colNames;
-        String sinkName = SinkGenerator.genSinkName(table);
-        return "INSERT INTO " + sinkName + " SELECT " + colNames + " FROM " + sourceName +
-                " WHERE " + SourceGenerator.EXTERNAL_COL_NAME + "=\"" + table + "\";";
+    private static final String udfSQL = "CREATE FUNCTION udf_test AS 'com.huawei.udf.UdfScalarFunction';";
+    private static final String udfName = "udf_test";
+    private static final String tempStreamSQL = "CREATE TEMP STREAM XX(TEMP_1 int);";
+    private static final String colName = "tableName, OP_TYPE, BEFORE, AFTER";
+
+    public static String genInsertSql(String sourceName) {
+        return udfSQL + "\n" +
+                tempStreamSQL + "\n" +
+                "INSERT INTO XX SELECT " + udfName + "(" + colName +
+                "\"" + Config.get(DWS_GEN_URL) + "\", " +
+                "\"" + Config.get(DWS_USER_NAME) + "\", " +
+                "\"" + Config.get(DWS_PASSWD) + "\", " +
+                "\"" + GroupManager.getTableMap() + "\"" +
+                ") FROM " + sourceName;
     }
 }

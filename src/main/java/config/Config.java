@@ -2,6 +2,7 @@ package config;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.HashMap;
 
 import group.GroupManager;
@@ -21,7 +22,7 @@ public class Config {
 
     private static HashMap<String, String> parameters = new HashMap<>();
 
-    public Config(String path) throws IOException {
+    public Config(String path) throws IOException, SQLException {
         // read file
         Workbook workbook;
         try {
